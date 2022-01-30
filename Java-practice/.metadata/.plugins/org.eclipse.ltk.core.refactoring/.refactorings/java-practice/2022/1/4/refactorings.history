@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;com.java.generics.Data&apos; to &apos;SwapDemo&apos;&#x0D;&#x0A;- Original project: &apos;java-practice&apos;&#x0D;&#x0A;- Original element: &apos;com.java.generics.Data&apos;&#x0D;&#x0A;- Renamed element: &apos;com.java.generics.SwapDemo&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;Data&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;com.java.generics{Data.java[Data" matchStrategy="1" name="SwapDemo" qualified="false" references="true" similarDeclarations="false" stamp="1642309769546" textual="false" version="1.0"/>
+</session>

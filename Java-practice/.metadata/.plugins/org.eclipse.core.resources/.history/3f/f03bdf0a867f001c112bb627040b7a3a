@@ -1,0 +1,10 @@
+package com.java.programs;
+
+public class cla {
+public static void main(int args) {
+	int a,b,c;
+	a=args[0];
+	b=args[1];
+System.out.println(a+b);
+}
+}

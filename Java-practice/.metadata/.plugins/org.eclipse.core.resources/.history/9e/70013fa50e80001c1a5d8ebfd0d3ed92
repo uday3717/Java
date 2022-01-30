@@ -1,0 +1,11 @@
+package com.java.programs;
+
+public class instanc {
+public static void main(String[] args) {
+	int a;
+	if (a instanceof int) {
+		boolean b=true;
+		System.out.println(b);
+	}
+}
+}

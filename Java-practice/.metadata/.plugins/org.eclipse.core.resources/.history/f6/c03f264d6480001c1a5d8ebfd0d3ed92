@@ -1,0 +1,20 @@
+package com.java.inheritance;
+ class Vehicle{
+
+	Vehicle() {
+		System.out.println("Vehicle type is Van");
+	}
+	 
+ }
+class Speed{
+	Speed(){
+		System.out.println("drive slowly...");
+	}
+}
+public class Van extends Vehicle {
+Speed s;
+public static void main(String[] args) {
+	Van ob=new Van();
+	
+}
+}

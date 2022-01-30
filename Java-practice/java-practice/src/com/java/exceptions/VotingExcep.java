@@ -1,0 +1,20 @@
+package com.java.exceptions;
+
+public class VotingExcep {
+public void vote(int x) throws VotingException {
+	if(x<18) {
+		throw new VotingException("you are not eligible for voting");
+	}else {
+		System.out.println("you are eligible for voting");
+	}
+}
+public static void main(String[] args) {
+	VotingExcep obj=new VotingExcep();
+	try {
+		obj.vote(1);
+	} catch (VotingException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+}
+}

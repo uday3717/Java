@@ -1,0 +1,23 @@
+package com.java.programs;
+
+public class maxof3 {
+public void max(int a,int b,int c) {
+	if(a>b) {
+		if(a>c) {
+			System.out.println(a);
+		}else {
+			System.out.println(c);
+		}
+	}else {
+		if(b>c) {
+			System.out.println(b);
+		}else {
+			System.out.println(c);
+		}
+	}
+}
+public static void main(String[] args) {
+	maxof3 obj=new maxof3();
+	obj.max(3,2,1);
+}
+}

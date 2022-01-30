@@ -1,0 +1,11 @@
+package com.java.inheritance;
+public class vehicle
+{
+	
+}
+public class Speed{
+	
+}
+public class Van extends vehicle {
+
+}

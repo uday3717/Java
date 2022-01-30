@@ -1,0 +1,6 @@
+package com.java.polymorphism;
+
+public class Employ {
+private String name;
+public String number
+}
