@@ -1,0 +1,1696 @@
+	opening a browser:
+	------------------------------------------
+	System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver.exe");
+	WebDriver driver=new FirefoxDriver();
+	sleep(3000);
+	========================================================================================================
+	maximizing the window:
+	-------------------------------------------
+	driver.manage().window().maximize();
+	==========================================================================================================
+	delete all cookies
+	---------------------------------------------
+	driver.manage().deleteAllCookies();
+	==========================================================================================================
+	Opening a url:
+	-----------------------------------------------
+	driver.get("http://the-internet.herokuapp.com/login");
+	===========================================================================================================
+	Navigating to another url:
+	-------------------------------------------------
+	driver.navigate().to("https://www.amazon.in/");
+	===========================================================================================================
+	navigating back to previous url:
+	--------------------------------------------------
+	driver.navigate().back();
+	==========================================================================================================
+	wait for some duration:
+	-------------------------------------------------
+	try {
+			Thread.sleep(y);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	extract the above method as sleep by right clicking->refractor->extract method
+	later where and all required, specify as sleep(y);
+	============================================================================================================
+	to check if a button is displayed:
+	---------------------------------------------------
+	WebElement logout=driver.findElement(By.linkText("Logout"));
+	Assert.assertTrue(logout.isDisplayed(), "Logout button is not displayed");
+	============================================================================================================
+	to compare actualurl of the current page with expected url:
+	-------------------------------------------------------
+	String eurl="http://the-internet.herokuapp.com/secure";
+	String aurl=driver.getCurrentUrl();
+	Assert.assertEquals(eurl, aurl, "actual url doesn't match with expected url");
+	=============================================================================================================
+	to compare 2 strings:
+	----------------------------------------------------
+	WebElement sumessage=driver.findElement(By.xpath("//div[@id='flash']"));
+	String amessage=sumessage.getText();
+	String emessage="You logged into a secure area!";
+	Assert.assertTrue(amessage.contains(emessage),"actual message does not conatin expected message");
+	===========================================================================================================
+	clicking a button:
+	--------------------------------------------------
+	WebElement login=driver.findElement(By.xpath("//i[@class='fa fa-2x fa-sign-in']"));
+	login.click();
+	==========================================================================================================
+	sending value to a field:
+	-------------------------------------------------
+	WebElement uname=driver.findElement(By.xpath("//input[@name='username']"));
+	uname.sendKeys("abcd");
+	===========================================================================================================
+	to quit a browser:
+	--------------------------------------------------
+	driver.close();
+	===========================================================================================================
+	to get current tittle of the current window:
+	---------------------------------------------------
+	driver.getTitle();
+	============================================================================================================
+	to set priority of execution of different test methods
+	---------------------------------------------------------
+	@Test(priority=1)
+	 ============================================================================================================
+	to enable or disable a method:
+	---------------------------------------------------------
+	@Test(enable=false)
+	@Test(enable=true)
+	============================================================================================================
+	to assign groups to method:
+	---------------------------------------------------------
+	@Test(groups = {"positivetests","smoketest"})
+	@Test(groups= {"negativetests","smoketest"})
+	here what happens is, when we include positivetest under groups in .xml file, then the corresponding method
+	under the positivetests will only run, similarly  when we include smoketest under groups in .xml file, then
+	both the methods will run as both methods fall under smoketest.
+	============================================================================================================
+	cross browser testing with optional parameter passing:
+	---------------------------------------------------------
+	@Parameters({"browser"})
+	@BeforeMethod(alwaysRun = true)
+	public void setup(@Optional("chrome") String browser) {
+		switch (browser) {
+		case "chrome":
+			System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
+			 driver=new ChromeDriver();
+			sleep(3000);
+			driver.manage().window().maximize();
+			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+			break;
+		case "firefox":
+			System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver.exe");
+			 driver=new FirefoxDriver();
+			sleep(3000);
+			driver.manage().window().maximize();
+			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+			break;
+		default:
+			System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
+			 driver=new ChromeDriver();
+			sleep(3000);
+			driver.manage().window().maximize();
+			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+			break;
+		}
+	}
+	============================================================================================================
+	to make use of groups and methods in .xml file:
+	---------------------------------------------------------
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+	<suite name="PositiveTests" verbose="1" >
+  	<test name="PositiveLoginTests" >
+  	<parameter name="browser" value="firefox"/>
+  	<groups>
+  	<run>
+  	<include name="positivetests"/>
+  	</run>
+  	</groups>
+    	<classes>
+      	<class name="com.java.tests.PosotiveTests">
+      	<!--  <methods>
+      	<include name="positiveLoginTest"/>
+      	</methods> -->
+      	</class>
+    	</classes>
+  	</test>
+   	<test name="NegativeUsernameTests" >
+	<!--     <parameter name="browser" value="chrome"/>
+	 -->  <parameter name="username" value="incorrectusername"/>
+    	<parameter name="password" value="SuperSecretPassword!"/>
+    	<parameter name="errormessage" value="Your username is invalid!"/>
+    	<classes>
+      	<class name="com.java.tests.PosotiveTests">
+       	<methods>
+      	<include name="negativeLoginTest"/>
+      	</methods>
+      	</class>
+    	</classes>
+  	</test>
+  	<test name="NegativePasswordTests" >
+	<!--        <parameter name="browser" value="chrome"/>
+ 	-->  <parameter name="username" value="tomsmith"/>
+    	<parameter name="password" value="incorrectpassword"/>
+    	<parameter name="errormessage" value="Your password is invalid!"/>
+    	<classes>
+      	<class name="com.java.tests.PosotiveTests">
+       	<methods>
+      	<include name="negativeLoginTest"/>
+      	</methods>
+      	</class>
+    	</classes>
+  	</test>
+	</suite>
+	============================================================================================================
+	how to give implicit waits:
+	---------------------------------------------------------
+	In a webpage different elements load at different time, so if we try to access the web element when they are hidden,
+	 they will throw ElementNotVisibleException, in order to avoid this, we need waits.
+	1. Implicit waits:
+	--------------------
+	here we would like to tell selenium that we would like to wait for a certain amount of time before throwing an exception
+	 that it can not find the element on the page.
+	driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+	These are also called as global waits, as they are applicable to all the elements on the web page.
+	For any element, first implicit wait applies, followed by the explicit wait, so never combine both.
+	in implicit wait there is no expected conditions to be specified.
+	2. Explicit waits:
+	---------------------
+	it is used to tell the webdriver to wait for certain conditions(expected conditions)or the maximum time before throwing
+	an elementNotVisibleException.
+	applies to particular elements only.
+	condition is required on the element to be located
+	WebDriverWait wait=new WebDriverWait(driver, 7);
+	wait.until(ExpectedConditions.somecondition);
+	3.Fluent wait:
+	----------------------------
+	it is used to tell the webdriver to wait for a certain condition as well as the frequency with which we want to check
+	the conditions before throwing an 'ElementNotVisibleException'.
+	Wait<WebDriver> fluentwait=new FluentWait<WebDriver>(driver)
+				.withTimeout(30,TimeUnit.SECONDS)
+				.pollingEvery(1,TimeUnit.SECONDS )
+				.ignoring(NoSuchElementException.class);
+		WebElement content=fluentwait.until(new Function<WebDriver, WebElement>() {
+			public WebElement apply(WebDriver driver) {
+				return driver.findElement(By.xpath("//h4[contains(text(),'Hello World!')]"));
+			}
+		});
+	 ============================================================================================================
+	to scroll down:
+	------------------------------
+	JavascriptExecutor js=(JavascriptExecutor)driver;
+	js.executeScript("window.scrollBy(0,800)");
+  	============================================================================================================
+	how to give page load out time:
+	------------------------------
+	driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+	============================================================================================================
+	handling NoSuchElementException:
+	------------------------------
+	driver.get("http://the-internet.herokuapp.com/dynamic_loading/2");
+	WebElement button=driver.findElement(By.xpath("//button[contains(text(),'Start')]"));
+	button.click();
+	//sleep(5000);//solution
+	WebDriverWait wait=new WebDriverWait(driver, 5);
+	WebElement text=wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//h4[contains(text(),'Hello World!')]")));
+	String amessage=text.getText();
+	String emessage="Hello World!";
+	Assert.assertTrue(amessage.contains(emessage), "actual message does not contain expected message...");
+	============================================================================================================
+	handling timeout exception:
+	------------------------------
+	driver.get("http://the-internet.herokuapp.com/dynamic_loading/1");
+	WebElement button=driver.findElement(By.xpath("//button[contains(text(),'Start')]"));
+	button.click();
+	WebElement text=driver.findElement(By.xpath("//h4[contains(text(),'Hello World!')]"));
+	WebDriverWait wait=new WebDriverWait(driver, 2);
+	try {
+	wait.until(ExpectedConditions.visibilityOf(text));
+	} catch (Exception e) {
+	// TODO Auto-generated catch block
+			sleep(3000);
+	}
+	String amessage=text.getText();
+	String emessage="Hello World!";
+	Assert.assertTrue(amessage.contains(emessage), "actual message does not contain expected message...");
+	============================================================================================================
+	Handling element not visible exception:
+	------------------------------
+	driver.get("http://the-internet.herokuapp.com/dynamic_loading/1");
+	WebElement button=driver.findElement(By.xpath("//button[contains(text(),'Start')]"));
+	button.click();
+	WebElement text=driver.findElement(By.xpath("//h4[contains(text(),'Hello World!')]"));
+	WebDriverWait wait=new WebDriverWait(driver, 5);
+	wait.until(ExpectedConditions.visibilityOf(text));
+	String amessage=text.getText();
+	String emessage="Hello World!";
+	Assert.assertTrue(amessage.contains(emessage), "actual message does not contain expected message...");
+	============================================================================================================
+	Handling stale element exception:
+	------------------------------
+	driver.get("http://the-internet.herokuapp.com/dynamic_controls");
+	WebElement chechbox=driver.findElement(By.xpath("//input[@type='checkbox']"));
+	WebElement removeButton=driver.findElement(By.xpath("//button[contains(text(),'Remove')]"));
+	removeButton.click();
+	WebDriverWait wait=new WebDriverWait(driver, 7);
+	//Assert.assertFalse(chechbox.isDisplayed(), "checkbox is still present while it shoudn't be...");
+	//Assert.assertTrue(wait.until(ExpectedConditions.invisibilityOf(chechbox)),"checkbox is still present while it shoudn't be..." );
+	Assert.assertTrue(wait.until(ExpectedConditions.stalenessOf(chechbox)),"checkbox is still present while it shoudn't be..." );
+	============================================================================================================
+	NoAlertPresentException:
+	------------------------------
+	System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+	WebDriver driver=new ChromeDriver();
+	Thread.sleep(3000);
+	driver.manage().window().maximize();
+	driver.get("https://www.google.com/");
+	try {
+		driver.switchTo().alert();
+	} catch (NoAlertPresentException e) {
+		// TODO Auto-generated catch block
+		System.out.println("there are no alerts in this page...");
+	}
+	driver.close();
+	}
+	============================================================================================================
+	-----------------------------------------------------------------------------------------------------------------------------------------
+	Locators:Id,Name,classname,cssSelector,xpath,linktext,partiallinktext,tagname...
+	general xpath://tagname[@attribute='value']
+	Xpath functions:
+	1. contains function://tagname[contains(@attribute,'value')]
+	2. Text function://tagname[contains(text(),'value')]
+	in css selector if id=dog and class=dog, then corresponding css selector for id=#dog and for class is .dog
+	these are used to uniquely find webelements in a webpage.
+	these are html properties of a webelement.
+	============================================================================================================
+	Handling alerts:
+	-------------------------
+	1.alert.accept(), 2.alert.dismiss(), 3. alert.sendkeys("uday"), 4. alert.getText(), 5. driver.switchTo().alert()
+	program with example:
+	-----------------------------------------
+	public static void main(String[] args) throws InterruptedException {
+	System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+	WebDriver driver=new ChromeDriver();
+	Thread.sleep(3000);
+	driver.manage().window().maximize();
+	driver.get("http://demo.automationtesting.in/Alerts.html");
+	driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+	driver.findElement(By.linkText("Alert with OK")).click();
+	driver.findElement(By.xpath("//div[@id='OKTab']/button[@class='btn btn-danger']")).click();
+	Alert alert=driver.switchTo().alert();
+	System.out.println(alert.getText());
+	Thread.sleep(2000);
+	alert.accept();
+	System.out.println("----------------------------------------");
+	driver.findElement(By.linkText("Alert with OK & Cancel")).click();
+	driver.findElement(By.xpath("//button[contains(text(),'click the button to display a confirm box')]")).click();
+	alert=driver.switchTo().alert();
+	System.out.println(alert.getText());
+	Thread.sleep(2000);
+	alert.accept();
+	System.out.println("----------------------------------------");
+	driver.findElement(By.linkText("Alert with Textbox")).click();
+	driver.findElement(By.xpath("//button[contains(text(),'click the button to demonstrate the prompt box')]")).click();
+	alert=driver.switchTo().alert();
+	alert.sendKeys("Uday Prakash");
+	Thread.sleep(2000);
+	alert.accept();
+	Thread.sleep(5000);
+	driver.close();
+	}
+	}
+	============================================================================================================
+	TestNg:
+	It is an open-source automated testing framework; where NG of TestNG means Next Generation. TestNG is similar to 
+	JUnit but it is much more powerful than JUnit but still, it’s inspired by JUnit. It is designed to be better 
+	than JUnit, especially when testing integrated classes. 
+	This eliminates most of the limitations of the older framework. It provides the developer the ability to write more 
+	flexible and powerful tests with help of easy annotations, grouping, sequencing & parametrizing.
+	Cedric Beust is the creator of TestNG.
+	Benefits of TestNg:
+	---------------------------
+	1. It gives the ability to produce HTML Reports of execution
+
+	2. Annotations made testers life easy
+
+	3. Test cases can be Grouped & Prioritized more easily
+
+	4. Parallel testing is possible
+
+	5. Generates Logs
+
+	6. Data Parameterization is possible
+	------------------------------------------------------------------------------------
+	Steps for using testNg:
+	-----------------------------------
+	Step 1 - Write the business logic of the test
+	Step 2 - Insert TestNG annotations in the code
+	Step 3 - Add the information about your test (e.g. the class names, methods names, groups names, etc...) in a testng.
+	xml file
+	Step 4 - Run TestNG
+	===============================================
+	Test Suite:
+	the collection of TestNG Tests together is called a Test Suite. A test suite can run multiple tests at once by 
+	executing the test suite. Additionally, these test cases can be dependent on each other or may have to be executed 
+	in a specific order independently. Moreover, running the TestNG test suite gives us the capability to manage 
+	our test execution.
+
+	It is important to remember that the TestNG does not let us define the test suites inside the test code or the 
+	main testing source code. Hence, we need to create a TestNG XML file for the same and execute this file.
+
+	Running a test suite in TestNG requires us to create a TestNG XML file and executing it to achieve the goals. 
+	Through this TestNG XML file only, we will be able to create and handle multiple test classes in the TestNG 
+	framework.
+	a simple testNg.xml file:
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+	<suite name="Test-Suite" >
+   	<test name="ToolsQA" >
+       	<classes> 
+        <class name="TestNG" />
+       	</classes>
+   	</test>
+ 	</suite>
+	---------------------------------------
+	<suite> - The suite tag can be given any name and denotes the test suite name.
+	<test> - The test tag can be given any name and indicates your test sets.
+	<classes> - This is the combination of your package name and test case name and cannot write anything else.
+	=================================================================================================================
+	TestNG annotations are the code that is written inside your source test code logic to control the flow of the 
+	execution of tests. It is essential to annotate your methods in TestNG to run the tests. TestNG will 
+	ignore the method which does not contain an annotation since it won't know when to execute this method.
+	there are several types of annotations:
+	@BeforeSuite - The @BeforeSuite method in TestNG runs before the execution of all other test methods.
+	@AfterSuite - The @AfterSuite method in TestNG runs after the execution of all other test methods.
+	@BeforeTest - The @BeforeTest method in TestNG runs before the execution of all the test methods that are inside 
+	that folder.
+	@AfterTest - The @AfterTest method in TestNG executes after the execution of all the test methods that are 
+	inside that folder.
+	@BeforeClass - The @BeforeClass method in TestNG will run before the first method invokes of the current class.
+	@AfterClass - The @AfterClass method in TestNG will execute after all the test methods of the current class execute.
+	@BeforeMethod - The @BeforeMethod method in TestNG will execute before each test method.
+	@AfterMethod - The @AfterMethod method in TestNG will run after each test method is executed.
+	@BeforeGroups - The @BeforeGroups method in TestNG run before the test cases of that group execute. 
+	It executes just once.
+	@AfterGroups - The @AfterGroups method in TestNG run after the test cases of that group execute. 
+	It executes only once.
+	-------------------------------------------------------------------------
+	If there are multiple @Test cases, TestNG runs the test cases in the alphabetical order. So, a test as
+	@Test
+	public void alpha(){
+	}
+	will run before the following test case:
+
+	@Test
+	public beta(){
+	}
+	The test cases without the priority attribute are given the "priority" and executed before the methods
+	 with priority. Also, they run alphabetically. 
+	program to understand the concept of annotations:
+	---------------------------------------------------------
+	public class p4 {
+	@BeforeSuite
+	public void beforeSuite() {
+	System.out.println("Before Suite");
+	}
+	@BeforeClass
+	public void beforeClass() {
+	System.out.println("Before Class");
+	}
+	@BeforeMethod
+	public void beforeMethod() {
+	System.out.println("Before Method");
+	}
+	@BeforeTest
+	public void beforeTest() {
+	System.out.println("Before Test");
+	}
+	@AfterSuite
+	public void afterSuite() {
+	System.out.println("After Suite");
+	}
+	@AfterClass
+	public void afterClass() {
+	System.out.println("After Class");
+	}
+	@AfterMethod
+	public void afterMethod() {
+	System.out.println("After Method");
+	}
+	@AfterTest
+	public void afterTest() {
+	System.out.println("After Test");
+	}
+	@Test
+	public void test() {
+	System.out.println("test method 1");
+	}
+	@Test
+	public void test2() {
+	System.out.println("test method 2");
+
+	}
+	}
+	--------------------
+	public class p5 {
+	@Test
+	public void test() {
+	System.out.println("Test method 3");
+	}
+	}	
+	-------------------
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+	<suite name="AnnotationsSuite">
+  	<test thread-count="5" name="AnnotationTest">
+    	<classes>
+      	<class name="com.java.tests.p4"/>
+      	<class name="com.java.tests.p5"/>
+    	</classes>
+  	</test> <!-- AnnotationTest -->
+	</suite> <!-- AnnotationsSuite -->
+	-----THE OUTPUT---------------------------
+	Before Suite
+	Before Test
+	Before Class
+	Before Method
+	test method 1
+	After Method
+	Before Method
+	test method 2
+	After Method
+	After Class
+	Test method 3
+	After Test
+	After Suite
+	===================================================================================================================
+	TestNg Groups
+	-------------------
+	Groups in TestNG denotes the process of grouping different tests together into a straightforward group and running 
+	these tests together by just running the group in a single command. It does not even matter 
+	if they belong to different classes.
+
+	 let's say you have a hundred tests of a class ToolsQA and in it ten methods of front-end design, 
+	ten methods of functional tests, and so on. You probably like to run all the front-end tests together 
+	in a batch. And you want all of them to be in a single test suite. With the help of grouping, 
+	you can easily overcome this situation by including all the front-end tests into one group.
+	example:
+	------------
+	public class groups1 {
+	WebDriver driver;
+	 @Test
+	    public void starting_point(){
+	    	System.out.println("This is the starting point of the test");
+	    	System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+	    	driver=new ChromeDriver();
+	    	driver.manage().window().maximize();
+	    	 driver.get("https://demoqa.com/");
+	    }
+	    
+	    
+	    @Test(groups = { "demo" })	
+	    public void checkTitle() {	
+	       String testTitle = "Free QA Automation Tools For Everyone";
+	       String originalTitle = driver.getTitle();
+	      Assert.assertEquals(originalTitle, testTitle);
+	    }	
+	    
+	    @Test(groups = { "demo" })	
+	    public void click_element() {	
+	       driver.findElement(By.xpath("//*[@id=\"sidebar\"]/aside[1]/ul/li[1]/a")).click();
+	        System.out.println("Home Page heading is displayed");	
+	    }
+	}
+	------------------------
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+	<suite name="GroupSuite">
+  	<test name="grouptest1">  
+     	<groups>
+   			<run>
+   				<include name = "demo"></include>
+   			</run>
+   	</groups>
+     	<classes>  
+         <class name="com.java.tests.groups1"/>  
+    	</classes>  
+   	 </test>  
+	</suite> <!-- AnnotationsSuite -->
+-------------------------------------------------------------
+	it will run only 2 test that comes under demo group.
+	==============================================================================================
+	Nested Groups:
+	----------------------------
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+	<suite name="Test-Suite" >
+   	<test name="ToolsQA" >
+   	<groups>
+   		<define name = "SuperGroup">
+   			<include name = "demo"></include>
+   		</define>
+   		<run>
+   			<include name = "SuperGroup"></include>
+   		</run>
+   	</groups>
+       	<classes> 
+                <class name="com.java.tests.groups1"/>  
+       	</classes>
+   	</test>
+ 	</suite>
+	it will run only 2 test that comes under demo group.
+---------------------------------------------------
+	=================================================================================================
+	Excluding Groups:
+	------------------------------
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+	<suite name="Test-Suite" >
+  	 <test name="ToolsQA" >
+   	<groups>
+   		<run>
+   			<exclude name = "demo">
+   			</exclude>
+   		</run>
+   		</groups>
+       	<classes> 
+                       <class name="com.java.tests.groups1"/>  
+       	</classes>
+   	</test>
+ 	</suite>
+	in this case only the method that doesn't come under demo group will be executed...
+	=================================================================================================
+	Dependent Tests:
+	------------------------
+	we may require that a test must run only when another test has run. For example, I want testB to 
+	run if testA has run. By this, I denote that testB is dependent on testA, and these 
+	are called Dependent Tests in TestNG. The dependent tests in TestNG determine the dependency of 
+	a test on a single or group of tests. 
+	1.dependsOnMethods:
+	public class p6 {
+	@Test (dependsOnMethods = { "OpenBrowser" })
+	  public void SignIn() {
+		  System.out.println("This will execute second (SignIn)");
+	  }
+
+	  @Test
+	  public void OpenBrowser() {
+		  System.out.println("This will execute first (Open Browser)");
+	  }
+	}
+	[RemoteTestNG] detected TestNG version 7.4.0
+	This will execute first (Open Browser)
+	This will execute second (SignIn)
+	PASSED: SignIn
+	PASSED: OpenBrowser
+	---------------------------
+	2.dependsOnGroups:
+	public class p7 {
+	@Test(dependsOnGroups = { "SignIn" })
+    	public void ViewAcc() {
+        System.out.println("SignIn Successful");
+    	}
+ 
+    	@Test(priority=2,groups = { "SignIn" })
+    	public void LogIn() {
+        System.out.println("Logging In Success");
+    	}
+    	@Test(priority = 1,groups={ "SignIn" })
+    	public void open_browser() {
+    	System.out.println("opening the browser...");
+    	}
+	}	
+	[RemoteTestNG] detected TestNG version 7.4.0
+	opening the browser...
+	Logging In Success
+	SignIn Successful
+	PASSED: ViewAcc
+	PASSED: open_browser
+	PASSED: LogIn
+	--------------------------------
+	Single dependent test methods in testNg:
+	A single dependent test in TestNG is declared when a single test depends on another test.
+	---------
+	public class p8 {
+	 @Test (dependsOnMethods = { "OpenBrowser" })
+	  public void SignIn() {
+		  System.out.println("User has signed in successfully");
+	  }
+
+	  @Test
+	  public void OpenBrowser() {
+		  System.out.println("The browser is opened");
+	  }
+
+	  @Test (dependsOnMethods = { "SignIn" })
+	  public void LogOut() {
+		  System.out.println("The user logged out successfully");
+	  }
+	}
+	[RemoteTestNG] detected TestNG version 7.4.0
+	The browser is opened
+	User has signed in successfully
+	The user logged out successfully
+	PASSED: SignIn
+	PASSED: LogOut
+	PASSED: OpenBrowser
+	----------------------------
+	Multiple dependent tests in TestNg:
+	->A single test depends on multiple tests in TestNG. 
+	-------------
+	public class p9 {
+	 @Test
+	    public void OpenBrowser() {
+	        System.out.println("Opening The Browser");
+	    }
+
+	    @Test(dependsOnMethods = { "SignIn", "OpenBrowser" })
+	    public void LogOut() {
+	        System.out.println("Logging Out");
+	    }
+	    
+	    @Test
+	    public void SignIn() {
+	        System.out.println("Signing In");
+	    }
+	}
+	[RemoteTestNG] detected TestNG version 7.4.0
+	Opening The Browser
+	Signing In
+	Logging Out
+	PASSED: OpenBrowser
+	PASSED: LogOut
+	PASSED: SignIn
+	---------------------------
+	Inherited dependent test Methods in testNg:
+	-> In inherited dependent test methods in TestNG, we create dependency among the methods that
+	 belong to different classes, and one of the classes inherits the functionalities
+	 of another class.
+	example:
+	public class superClass {
+	 @Test
+	    public void OpenBrowser() {
+	        System.out.println("BrowserOpened");
+	    }
+	}
+	------------
+	public class subclass extends superClass{
+	@Test(dependsOnMethods = { "OpenBrowser" })
+   	 public void LogIn() {
+        System.out.println("Logged In");
+    	}
+	}
+	[RemoteTestNG] detected TestNG version 7.4.0
+	BrowserOpened
+	Logged In
+	PASSED: LogIn
+	PASSED: OpenBrowser
+	--------------------------
+	TestNG lets you create dependencies between groups in the XML file. So, if you have multiple 
+	groups in the TestNG file, you can create the dependent tests in between 
+	them in the XML file.
+	-----------
+	TestNG Dependent Test In XML Suite:
+	---------------
+	public class p10 {
+	 @Test(groups = { "viewacc" })
+	    public void ViewAcc() {
+	        System.out.println("View Your Dashboardd");
+	    }
+	 
+	    @Test(groups = { "openbrowser" })
+	    public void OpenBrowser() {
+	        System.out.println("Browser Opened Successfully");
+	    }
+	 
+	    @Test(groups = { "login" })
+	    public void LogIn() {
+	        System.out.println("Login Into The Account");
+	    }
+	    
+	    @Test(groups = {"logout"})
+	    public void CloseAccount() {
+	    	System.out.println("Closing The Account");
+	    }
+	}
+	-----------------------
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+	<suite name="TestNG XML Dependency Suite" >
+   	<test name="ToolsQA" >
+   	<groups>
+   		<dependencies>
+   			<group depends-on= "openbrowser" name= "login"></group>
+   			<group depends-on= "login" name= "viewacc"></group>
+   			<group depends-on= "viewacc" name= "logout"></group>
+   		</dependencies>
+   		</groups>
+       	<classes> 
+          <class name="com.java.tests.p10" />
+       	</classes>
+   	</test>
+ 	</suite>
+	output:
+	[RemoteTestNG] detected TestNG version 7.4.0
+	Browser Opened Successfully
+	Login Into The Account
+	View Your Dashboardd
+	Closing The Account
+
+	-------------------------------
+	In the "dependencies" tag, I have created the flow of groups that I want to execute. 
+	There are a total of three components in each dependency that I have created.
+
+	<group> - The tag you need to specify to tell XML that we are talking about the groups.
+
+	depends-on -* The name of the group on which you want this group to depend*.
+
+	name- Name of the group that you want to depend on.
+
+	<group depends-on = "***openbrowser***" name = "***login***"></group>
+
+	The above code states that the group named "login" should depend upon the group with 
+	the name "openbrowser".
+	===============================================================================================
+	TestNg:
+	------------
+	Console reports in TestNG are short and simple, which just denote the overall summary of the test.
+	Alongside the console tab, the reports tab lies in Eclipse that generates a more in-depth view
+	 than what we had in the console.
+	The top section of the report contains the same summary that we saw in the console part. 
+	We have marked it in the above screenshot.
+
+	Below the summary, TestNG provides the class name and the function name that were part 
+	of the tests.
+	Along with that, the time is taken to execute the "f()" test method is available alongside.
+	 It is the default view that comes under the "All Tests" part.
+
+	Failed Tests and Summary of the tests are also visible with the different tabs besides All Tests, 
+	How To Generate Emailable Report In TestNG?
+	-----------------
+	Emailable reports are generated in TestNG to let the user send their test reports to other 
+	team members. Emailable-reports do not require any extra work from the tester, and they are a
+	 part of overall test execution. To generate emailable reports, first, run the 
+	TestNG test class if you have not already.
+
+	Once we have run the test case, a new folder generates in the same directory with the name test-output.
+	Another important file that resides inside the test-output folder is index.html.
+	 Let's have a look at that.
+	We can divide this report into two parts. The left part contains the index, and this is the
+	 reason it is called an index report, while the right part contains the explored content of that index.
+	----------------
+	Logging a string in the reports:
+	--------------
+	public class p2 {
+	@Test
+	public void f() {
+		  String baseUrl = "https://www.toolsqa.com/"; 
+		  System.out.println("Launching Google Chrome browser"); 
+		  System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+	    	WebDriver driver=new ChromeDriver();
+		  driver.get(baseUrl);
+		  Reporter.log("We used Google Chrome Ver 80 for this test");
+		  String testTitle = "Free QA Automation Tools For Everyone";
+		  String originalTitle = driver.getTitle();
+		  Assert.assertEquals(originalTitle, testTitle);
+	  }
+	}
+	--------------------------------
+	run the test and open emailable-report and see that the string has been logged.
+	===============================================================================================
+	TestNg Parameters:
+	A simple reason to use parameters is that they let us run a function many times with different 
+	values or to run different functions with the same values. Parameters pass 
+	the values in the runtime.
+	example:
+	public class Params
+	{
+    	@Test
+    	@Parameters ({"val1", "val2"})
+    	public void Sum(int v1, int v2) {
+    	int finalsum = v1 + v2;
+        System.out.println("The final sum of the given values is " + finalsum);
+    	}
+	}
+	-----------------
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+	<suite name="TestNG Parameters Suite">
+   	<test name="Params">
+      	<parameter name="val1" value="2" />
+      	<parameter name="val2" value="3" />
+      	<classes>
+         <class name="Params" />
+      	</classes>
+   	</test>
+	</suite>
+	---------
+	In the above XML file, we have defined a tag called parameters which work as follows:
+
+	name: Name of the variable that you declared in the test case file like val1 and val2 
+	in the above example.
+	value: The value of the variable you want to insert.
+	-------------
+	How to Define Parameters in TestNG at the Suite Level?
+	----------------
+	public class p1 {
+	 @Test
+	    @Parameters ({"val1", "val2"})
+	    public void Sum(int v1, int v2) {
+	    	int finalsum = v1 + v2;
+	        System.out.println("The final sum of the given values is " + finalsum);
+	    }
+	    
+	    @Test
+	    @Parameters ({"val1", "val2"})
+	    public void Diff (int v1, int v2) {
+	    	int finaldiff = v1 - v2;
+	    	System.out.println("The final difference of the given values is " + finaldiff);
+	    }
+	}
+	---------
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+	<suite name="TestNG Parameters Suite">
+   	<parameter name="val1" value="3" />
+   	<parameter name="val2" value="50" />
+   	<test name="Params">
+      	<classes>
+         <class name="com.testNg.parameters.p1" />
+      	</classes>
+   	</test>
+	</suite>
+	----------------
+	[RemoteTestNG] detected TestNG version 7.4.0
+	The final difference of the given values is -47
+	The final sum of the given values is 53
+	cocclusion: By defining the parameters in the suite level, you can not only pass the same 
+	values in the different methods of the same class but also on different methods
+	 in different classes.
+	-----------
+	in same way we can pass the parameters that are defined at suite level to methods that are
+	present in different classes as well. This is the advantage of defining the parameters at
+	 the suite level.
+	example:
+	public class Multiply {
+	 @Test
+	    @Parameters ({"val1", "val2"})
+	    public void mul(int v1, int v2) {
+	    	int prod = v1*v2;
+	        System.out.println("The Product Of Value 1 and 2 is " + prod);
+	    }
+	}
+	----------------
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+	<suite name="TestNG Parameters Suite">
+   	<parameter name="val1" value="3" />
+   	<parameter name="val2" value="50" />
+   	<test name="Params">
+      	<classes>
+         <class name="com.testNg.parameters.p1" />
+      	</classes>
+   	</test>
+   	<test name="Multiply">
+      	<classes>
+         <class name="com.testNg.parameters.Multiply" />
+      	</classes>
+   	</test>
+	</suite>
+	-------------------
+	output:
+	[RemoteTestNG] detected TestNG version 7.4.0
+	The final difference of the given values is -47
+	The final sum of the given values is 53
+	The Product Of Value 1 and 2 is 150
+	-----------------
+	if parameters are defined at both test level and suite level, then test level parameters
+	are given more priority
+	example:
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+	<suite name="TestNG Parameters Suite">
+   	<parameter name="val1" value="3" />
+   	<parameter name="val2" value="50" />
+   	<test name="Params">
+      	<parameter name="val1" value="13" />
+      	<parameter name="val2" value="5" />
+      	<classes>
+         <class name="Params" />
+      	</classes>
+   	</test>
+	</suite>
+	--------output-------
+	[RemoteTestNG] detected TestNG version 7.4.0
+	The final difference of the given values is 8
+	The final sum of the given values is 18
+	--------------
+	Optional Pramaters:
+	------
+	So, if no parameter value is specified, the optional parameter value is taken. 
+	example:
+	public class optional {
+	 @Test
+	    @Parameters ("message")
+	    public void OP( @Optional("Optional Parameter Selected") String message) {
+	        System.out.println(message);
+	    }
+	}
+	-------------
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+	<suite name="TestNG Parameters Suite">
+   	<test name="Params">
+      	<parameter name="message" value="Normal Parameter Selected" />
+      	<classes>
+         <class name="com.testNg.parameters.optional" />
+      	</classes>
+   	</test>
+   	<test name="Params 2">
+      	<classes>
+         <class name="com.testNg.parameters.optional" />
+      	</classes>
+   	</test>
+	</suite>
+	---------output-------------
+	[RemoteTestNG] detected TestNG version 7.4.0
+	Normal Parameter Selected
+	Optional Parameter Selected
+	===============================================================================================
+	Data Providers:
+	-----------------------
+	The DataProviders in TestNG are another way to pass the parameters in the test function, 
+	the other one being TestNG parameters. DataProviders pass different values to the TestNG
+	 Test Case in a single execution and in the form of TestNG Annotations.
+	syntax:
+	---------
+	@DataProvider (name = "name_of_dataprovider")
+	public Object[][] dpMethod() {
+    	return new Object [][] { values}
+	}
+	--------
+	Basic rules:
+	The TestNG DataProvider (the annotation part) contains only one single attribute, which is its name.
+	 It is always a string type in nature. For example, "name_of_dataprovider", as mentioned above.
+	DataProviders are not declared on top of the functions like TestNG parameters but have a method of 
+	their own, which in regular speaking terms called a dataprovider method. For example, dpMethod here.
+	If the tester has not specified the name of the dataprovider, then the method name becomes the
+	 dataprovider name by default.
+	TestNG dataprovider returns a 2d list of objects.
+	The method then performs a data-driven test for each value that you have specified.
+	The dataprovider name calls the dataprovider method, and if there is no name specified by the 
+	tester, then the dataprovider method is the default name used in the receiving @Test case.
+	---------------------
+	example:
+	--------------------
+	public class p1 {
+	 @DataProvider (name = "data-provider")
+     	public Object[][] dpMethod(){
+	 return new Object[][] {{"First-Value"}, {"Second-Value"}};
+     	}
+	
+    	@Test (dataProvider = "data-provider")
+    	public void myTest (String val) {
+        System.out.println("Passed Parameter Is : " + val);
+    	}
+	}
+	--------------------------
+	output:
+	[RemoteTestNG] detected TestNG version 7.4.0
+	Passed Parameter Is : First-Value
+	Passed Parameter Is : Second-Value
+	PASSED: myTest("First-Value")
+	PASSED: myTest("Second-Value")
+	--------------------------------------------
+	Inherited DataProvider In TestNG
+	-----------------------------------------
+	Dataprovider and the test case method can also be in two different classes. 
+	It is inheriting the dataprovider since we are inheriting it from another file.
+	-------------
+	example:
+	public class DP {
+	@DataProvider (name = "data-provider")
+    	public Object[][] dpMethod(){
+       return new Object[][] {{"Value Passed"}};
+    	} 
+	}
+	-------------
+	public class DataProvider {
+	  @Test (dataProvider = "data-provider", dataProviderClass = DP.class)
+	    public void myTest (String val) {
+	      System.out.println("Current Status : " + val);
+	    }
+	}
+	--------output------------
+	[RemoteTestNG] detected TestNG version 7.4.0
+	Current Status : Value Passed
+	PASSED: myTest("Value Passed")
+	==============================================================================================
+	DataProviders With Method As A Parameter
+	------------------------------------------------
+	public class p2 {
+	@DataProvider (name = "data-provider")
+	public Object[][] dpMethod (Method m){
+		switch (m.getName()) {
+		case "Sum": 
+			return new Object[][] {{2, 3 , 5}, {5, 7, 9}};
+		case "Diff": 
+			return new Object[][] {{2, 3, -1}, {5, 7, -2}};
+		}
+		return null;
+		
+	}
+	
+	@Test (dataProvider = "data-provider")
+	 public void Sum (int a, int b, int result) {
+	      int sum = a + b;
+	      Assert.assertEquals(result, sum);
+	 }
+	  
+	@Test (dataProvider = "data-provider")
+	public void Diff (int a, int b, int result) {
+	      int diff = a - b;
+	      Assert.assertEquals(result, diff);
+	 }
+	}
+	-----------output---------------
+	[RemoteTestNG] detected TestNG version 7.4.0
+	PASSED: Sum(2, 3, 5)
+	PASSED: Diff(5, 7, -2)
+	PASSED: Diff(2, 3, -1)
+	FAILED: Sum(5, 7, 9)
+	==============================================================================================	
+	TestNg priorities:
+	Prioritization in TestNG is a way to provide a sequence to the methods so that they do not run
+	 out of order. Since alphabetically running test cases in TestNG have no logical sequence 
+	(concerning the tests and code), providing priority to these test cases helps us managing
+	 our tests' execution.
+	Priority in TestNG test cases is a parameter with attribute value as "priority".
+	The following is the syntax for allocating a priority to a test case method.
+
+	@Test (priority = 1)
+	public void func(){
+   	//test code
+	}
+	->Definition of Priority in TestNG test methods can only be the @Test methods.
+	->Lower the priority number; higher is the priority of the test case method.
+	->Priority in TestNG contains only integer value. The value can be negative, zero, or positive.
+	->If a tester defines a priority in decimal in TestNG, it needs to convert first to
+	 Integer (through typecasting).
+	->One method is allowed to have only one priority in TestNG.
+	->Priority cannot pass through the XML files.
+	ex:
+	public class p1 {
+	WebDriver driver;
+	@BeforeTest
+	public void setup() {
+		 System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+	    	driver=new ChromeDriver();
+	}
+	@Test (priority = 1)
+	public void CloseBrowser() {
+		driver.close();
+		System.out.println("Closing Google Chrome browser");
+	}
+
+	@Test (priority = 0)
+	public void OpenBrowser() {
+		System.out.println("Launching Google Chrome browser"); 
+		driver.get("https://www.google.com/");
+	}
+	}
+	------------
+	output:
+	Launching Google Chrome browser
+	Closing Google Chrome browser
+	PASSED: OpenBrowser
+	PASSED: CloseBrowser
+	---------------------------
+	tests with same priority:
+	ex:
+	public class p2 {
+	WebDriver driver;
+	@BeforeTest
+	public void setup() {
+		 System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+	    	driver=new ChromeDriver();
+	}
+	@Test (priority = 1)
+	public void CloseBrowser() {
+		driver.close();
+		System.out.println("Closing Google Chrome browser");
+	}
+
+	@Test (priority = 0)
+	public void OpenBrowser() {
+		driver.get("https://www.google.com/");
+		System.out.println("Launching Google Chrome browser"); 
+	}
+
+	@Test (priority = 1)
+	public void AccountTest(){
+		System.out.println("Some tests for Customer Account");
+	}
+	}
+	---------------
+	output:
+	Launching Google Chrome browser
+	Some tests for Customer Account
+	Closing Google Chrome browser
+	PASSED: OpenBrowser
+	PASSED: CloseBrowser
+	PASSED: AccountTest
+	conclusion:
+	---------
+	 if two or more methods have the same priorities in TestNG, then their running test sequence
+	 is alphabetic. Since "A" comes before "C", the method AccountTest ran first.
+	note:The test methods with no priority assigned have a default priority equal to 0.
+	 It means if we define no priorities, all the test methods will be assigned priority 0,
+	 and a similar priority case will apply.
+	-----------------
+	another ex:
+	public class p3 {
+	WebDriver driver;
+	@BeforeTest
+	public void setup() {
+		 System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+	    	driver=new ChromeDriver();
+	}
+	@Test (priority = 0)
+	public void CloseBrowser() {
+		driver.close();
+		System.out.println("Closing Google Chrome browser");
+	}
+
+	@Test (priority = -1)
+	public void OpenBrowser() {
+		System.out.println("Launching Google Chrome browser"); 	        
+		driver.get("https://www.google.com/");
+	}
+
+	@Test
+	public void AccountTest(){
+		System.out.println("Some tests for Customer Account");
+	}
+	}
+	-------------
+	output:
+	Launching Google Chrome browser
+	Some tests for Customer Account
+	Closing Google Chrome browser
+	PASSED: CloseBrowser
+	PASSED: OpenBrowser
+	PASSED: AccountTest
+	---------------------------
+	Looking at the output of this test code, we prove three main points in TestNG priority:
+
+	We can assign negative priorities to a method.
+	With a method with no priority, the priority is set to 0 by default.
+	Observe that the AccountTest method ran before CloseBrowser even without having any 
+	priority because both sets to priority = 0, and hence, they run alphabetically.
+	----------------------
+	Skipping of tests:
+	example:
+	public class p4 {
+	WebDriver driver;
+	@BeforeTest
+	public void setup() {
+		 System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+	    	driver=new ChromeDriver();
+	}
+	@Test (priority = 0)
+	public void CloseBrowser() {
+		driver.close();
+		System.out.println("Closing Google Chrome browser");
+	}
+
+	@Test (priority = -1)
+	public void OpenBrowser() {
+		System.out.println("Launching Google Chrome browser"); 	        
+		driver.get("https://www.google.com/");
+	}
+
+	@Test (enabled = false)
+	public void AccountTest(){
+		System.out.println("Some tests for Customer Account");
+	}
+	}
+	output:
+	Launching Google Chrome browser
+	Closing Google Chrome browser
+	PASSED: OpenBrowser
+	PASSED: CloseBrowser
+	---------------------------------------------------------------------------------------------
+	TestNg Asserts:
+	------------------------
+	Assertions in TestNG are a way to verify that the expected result and the actual result
+	 matched or not. If we could decide the outcome on different small methods using assertions
+	 in our test case, we can determine whether our test failed or passed overall. 
+	syntax:Assert.Method(actual, expected)
+	example:
+	public class p1 {
+	WebDriver driver;
+	@BeforeTest
+	public void setup() {
+		 System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+	    	driver=new ChromeDriver();
+	}
+	@Test (priority = 0)
+	public void CloseBrowser() {
+		driver.close();
+		Reporter.log("Driver Closed After Testing");
+	}
+	
+	@Test (priority = -1)
+	public void OpenBrowser() {
+		Reporter.log("This test verifies the current selenium compatibility with TestNG by launching the chrome driver");
+	        Reporter.log("Launching Google Chrome Driver version 81 for this test"); 
+	        
+			driver.get("https://www.google.com/");
+	        
+	        Reporter.log("The website used was DemoQA for this test", true);
+	        String expectedTitle = "Free QA Automation Tools For Everyone";
+	        String originalTitle = driver.getTitle();
+	        Assert.assertEquals(originalTitle, expectedTitle);
+  	}
+	}
+	--------output:
+	The website used was DemoQA for this test
+	PASSED: CloseBrowser
+	FAILED: OpenBrowser
+	--------------
+	to use message as a parameter for assertion:
+	------
+	syntax:Assert.Method(actual, expected, message)
+	Message: A string message to display only in case of an error when the assert fails.
+	i.e in the same program modify as: 	
+	Assert.assertEquals(originalTitle, expectedTitle,"Titles of the website do not match");
+	----------------
+	Different types of Asserts in TestNG
+	-----------------
+	There are two types of TestNg Assert:
+
+	Hard Assert:
+	--------------------
+	Hard Asserts are those asserts that stop the test execution when an assert statement 
+	fails, and the subsequent assert statements are therefore not validated. It plays
+	 a vital role in projects where we have an element without whose validation, asserting
+	 other elements is useless. 
+	Soft Assert:
+	---------------
+	So, when should we use soft asserts in TestNG? We use soft asserts when we
+	 do not care about the failure of specific validations and want the test execution to
+	 proceed and also want to see the exception errors.
+	you need to include the package org.testng.asserts.Softassert.
+	example:
+	
+	public class p3 {
+	WebDriver driver;
+	@BeforeTest
+	public void setup() {
+		 System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+	    	driver=new ChromeDriver();
+	}
+	@Test (priority = 0)
+	public void CloseBrowser() {
+		driver.close();
+		Reporter.log("Driver Closed After Testing");
+	}
+	
+	@Test (priority = -1)
+	public void OpenBrowser() {
+			Reporter.log("This test verifies the current selenium compatibility with TestNG by launching the chrome driver");
+	        Reporter.log("Launching Google Chrome Driver version 81 for this test"); 
+			driver.get("https://www.google.com/");
+
+	        SoftAssert softassert = new SoftAssert();
+	        Reporter.log("The website used was DemoQA for this test", true);
+	        String expectedTitle = "Free QA Automation Tools For Everyone";
+	        String originalTitle = driver.getTitle();
+	        softassert.assertEquals(originalTitle, expectedTitle);
+	        System.out.println("*** Checking For The Second Title ***");
+	// Checking title for ToolsQA – Demo Website to Practice Automation – Demo Website to Practice Automation
+	        softassert.assertEquals(originalTitle, "ToolsQA – Demo Website to Practice Automation – Demo Website to Practice Automation" );
+	        softassert.assertAll();
+  	}
+	}
+	---------------
+	The website used was DemoQA for this test
+	*** Checking For The Second Title ***
+	PASSED: CloseBrowser
+	FAILED: OpenBrowser
+	------------------
+	commonly used testNg methods:
+	->Assert.assertEqual(String actual, String expected): Pass the actual string value and the expected string value as parameters.
+	 Validates if the actual and expected values are the same or not.
+	->Assert.assertEqual(String actual, String expected, String message): Similar to the previous method just that when the
+	 assertion fails, the message displays along with the exception thrown.
+	->Assert.assertEquals(boolean actual, boolean expected): Takes two boolean values as input and validates if they are equal or not.
+	->Assert.assertTrue(condition): This method asserts if the condition is true or not. If not, then the exception error is thrown.
+	->Assert.assertTrue(condition, message):  Similar to the previous method with an addition of message, which is shown on 
+	the console when the assertion fails along with the exception.
+	->Assert.assertFalse(condition): This method asserts if the condition is false or not. If not, then it throws an exception error.
+	->Assert.assertFalse(condition, message): Similar to the previous method but with an addition of a message string which is
+	 shown on the console when the assertion fails, i.e., the condition is true*.
+	->public static void assertEquals(Object actual, Object expected, String message): Asserts whether the two objects passed 
+	are equal or not. If not, the message and the exception error appears. The message parameter is optional.
+	->public static void assertEquals(String actual, String expected, String message): Asserts whether two strings are 
+	equal or not. If not, the message along with the exception error displays. The message parameter is optional.
+	========================================================================================================================
+	Need for Cross Browser Testing:
+	---------------
+	->Cross-browser testing using TestNG ensure a better performance on different browsers and OS.
+	->Image orientations mess up a lot of the time. We can take care of it.
+	->The tester and the developer can assure how JavaScript renders on different browsers.
+	->One can track Font-size issues.
+	->The unsupported tags can be revealed, which can be taken care of by turnaround codes.
+	ex:
+	----
+	public class p1 {
+	WebDriver driver;
+	@Parameters({"browser"})
+	@BeforeMethod(alwaysRun = true)
+	public void setup(@Optional("chrome") String browser) throws InterruptedException {
+		switch (browser) {
+		case "chrome":
+			System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+			 driver=new ChromeDriver();
+			Thread.sleep(3000);
+			driver.manage().window().maximize();
+			break;
+		case "firefox":
+			System.setProperty("webdriver.gecko.driver", "C:/Users/DELL/Desktop/resources-udemy/geckodriver.exe");
+			 driver=new FirefoxDriver();
+			 Thread.sleep(3000);
+			driver.manage().window().maximize();
+			break;
+		default:
+			System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+			 driver=new ChromeDriver();
+			 Thread.sleep(3000);
+			driver.manage().window().maximize();
+			break;
+		}
+	}
+	@Test
+	public void testMethod() throws InterruptedException {
+		driver.get("https://www.google.com/");
+		driver.findElement(By.xpath("//input[@class='gLFyf gsfi']")).sendKeys("retriver"+Keys.ENTER);
+		Thread.sleep(3000);
+	}
+	@AfterMethod
+	public void exit() {
+		driver.close();
+	}
+	}
+	-----------
+	testNg data provider with excel:
+	-----------
+	Data Driven Testing:
+	->A key benefit of automating functional testing is the ability to test large volumes of data
+	 on the system quickly. But you must be able to manipulate the data sets, perform calculations.
+	->Test Automation Frameworks must-have capability to integrate with spreadsheets and
+	 provide powerful calculation features.
+	Apache POI:
+	-------
+	 the Apache POI library, which allows you to read, create and edit Microsoft Office-documents 
+	using Java.
+	Most commercial automated software tools on the market support some sort of data-driven
+	 testing, which allows you to automatically run a test case multiple times with different input 
+	and validation values.
+	In order to read input parameter from a excel file, we always make use of the data provider method.
+	example:
+	----
+	public class p1 {
+	private static WebDriver driver;
+	@BeforeMethod
+	public void setup() throws InterruptedException {
+		System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+		 driver=new ChromeDriver();
+		 Thread.sleep(3000);
+		driver.manage().window().maximize();
+	}
+	@Test(dataProvider = "abd")
+	public void testMethod(String username,String password) throws InterruptedException {
+		driver.get("https://www.facebook.com/")	;
+		driver.findElement(By.xpath("//input[@id='email']")).sendKeys(username);
+		driver.findElement(By.xpath("//input[@id='pass']")).sendKeys(password);
+		Thread.sleep(3000);
+	}
+	@AfterMethod
+	public void exit() {
+		driver.close();
+	}
+	@DataProvider(name="abd")
+	public Object[][] data(){
+		p2 obj=new p2("C:/Users/DELL/Desktop/data.xlsx");
+		int r=obj.getRowCount(0);
+		Object[][] d=new Object[r][2];
+		for(int i=0;i<r;i++) {
+			d[i][0]=obj.readData(0, i, 0);
+			d[i][1]=obj.readData(0, i, 1);
+
+		}
+		return d;
+	}
+
+	}
+	----
+	public class p2 {
+	private XSSFWorkbook wb;
+	private XSSFSheet sheet;
+	public p2(String s) {
+	File f1=new File(s);
+	try {
+		FileInputStream fis=new FileInputStream(f1);
+		wb=new XSSFWorkbook(fis);
+	} catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	}
+	public String readData(int sheetNo,int rowNo, int columnNo) {
+	sheet=wb.getSheetAt(sheetNo);
+	String data=sheet.getRow(rowNo).getCell(columnNo).getStringCellValue();
+	return data;
+	}
+	public int getRowCount(int sheetNo) {
+	int row=wb.getSheetAt(sheetNo).getLastRowNum();
+	row=row+1;
+	return row;
+		
+	}
+	
+	}
+	---to use apache poi, add jars from poi-bin,lib,ooxml-lib folder.
+	=======================================================================================
+	Parallel Testing:
+	----------
+	Parallel testing or parallel execution, as the name suggests, is a process of 
+	running the test case parallelly rather than one after the other.
+	->Parallel testing is used heavily with Selenium because of the importance of cross-browser 
+	testing in the market today. If we have so many browsers with a different version,
+	 we can just create a browser matrix and run the tests parallelly, saving us a ton of 
+	resources such as time.
+	Advantages:
+	--------------
+	Reduces Time: Running the tests in parallel reduces the overall execution time.
+	Allow Multi-Threaded Tests
+	disadvantages:
+	--------------
+	->Fails On Dependent Modules: Parallel testing allows independent running of modules 
+	simultaneously. Due to this, we cannot go ahead with modules that are dependent on 
+	each other, and this occurs quite frequently while testing. So, either we run 
+	serially or dissolve independence, which takes extra time and effort.
+	->Knowledge Of Program Flow: The tester should be well-versed with the flow of
+	 the program to create parallel testing modules. A slight interdependency can 
+	bring down the whole test case execution. The tester should also know which
+	 modules to run in multiple threads and which ones to run in the same threads etc.
+	---------------------
+	example:
+	public class p1 {
+	public WebDriver driver;
+   	 @Test
+    	public void FirefoxTest() {	 
+    	System.setProperty("webdriver.gecko.driver", "C:/Users/DELL/Desktop/resources-udemy/geckodriver.exe");
+		 driver=new FirefoxDriver(); 
+    	driver.get("https://www.google.com/"); 
+    	driver.findElement(By.xpath("//input[@class='gLFyf gsfi']")).sendKeys("retriver"+Keys.ENTER);
+    	driver.quit();
+     	}
+
+    	@Test
+	public void ChromeTest()
+	{ 
+    	System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+		 driver=new ChromeDriver();
+  	driver.get("https://www.google.com/"); 
+  	driver.findElement(By.xpath("//input[@class='gLFyf gsfi']")).sendKeys("husky"+Keys.ENTER);
+  	driver.quit();
+	}
+	}
+	--------
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+	<suite name="ParallelSuite">
+  	<test thread-count="5" name="ParallelTest" parallel="methods">
+    	<classes>
+      <class name="com.test.parallel.p1"/>
+    	</classes>
+  	</test> <!-- ParallelTest -->
+	</suite> <!-- ParallelSuite -->
+	-----------
+	note:the "methods" value is assigned to the parallel attribute since we are aiming
+	 towards the execution of the parallel methods.
+	--------------------------------------------------------------------------------------------
+	Introduction to Threads in TestNG:
+	-------------
+	->Threads in parallel testing refer to different parts in which the test execution will be
+	 divided and run parallelly. So if there are two threads and two methods, 
+	they will take one method each and run them parallelly (if we are running the methods
+	 parallelly). But if there are three methods and two threads, one will have to wait until
+	 one thread is free and takes up that method for execution. 
+	default value of thread-count in xml file is 5.
+	note:
+	--------
+	to get the thread id for a particular test method just include the following line in the test method:
+	System.out.println("The thread ID for Firefox is "+ Thread.currentThread().getId());
+	in .xml make thread-count as 2 and run the same xml file:
+	[RemoteTestNG] detected TestNG version 7.4.0
+	The thread ID for Firefox is 18
+	The thread ID for chrome is 17
+	if only one thread is there, then the methods will run one after the other, hence will have same thread id.
+	running classes parallely:
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+	<suite name="ParallelSuite">
+  	<test thread-count="2" name="ParallelTest" parallel="classes">
+    	<classes>
+      	<class name="com.test.parallel.chromeTest"/>
+      	<class name="com.test.parallel.firefoxTest"/>
+    	</classes>
+  	</test> <!-- ParallelTest -->
+	</suite> <!-- ParallelSuite -->
+	=====================================================
+	running test suites parallely:
+	----
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+	<suite name="ParallelSuite" thread-count="2" parallel="tests">
+  	<test  name="Test1" >
+    	<classes>
+      <class name="com.test.parallel.chromeTest"/>
+    	</classes>
+  	</test>
+  	<test  name="Test2" >
+    	<classes>
+      <class name="com.test.parallel.chromeTest"/>
+    	</classes>
+  	</test>  <!-- ParallelTest -->
+	</suite> <!-- ParallelSuite -->
+	======================================================================================
+	new method:
+	public class p3 {
+	@Test(threadPoolSize = 4, invocationCount = 4, timeOut = 1000)
+    	public void testMethod() 
+    	{
+        System.out.println("Thread ID Is : " + Thread.currentThread().getId());
+    	}
+	}
+	where:
+	threadPoolSize: The number of threads we would like to create and run the test parallelly.
+	invocationCount: The number of times we would like to invoke this method.
+	timeOut: The maximum time a test execution should take. If exceeded, the test fails automatically.
+	output:
+	[RemoteTestNG] detected TestNG version 7.4.0
+	Thread ID Is : 15
+	Thread ID Is : 18
+	Thread ID Is : 17
+	Thread ID Is : 16
+	PASSED: testMethod
+	PASSED: testMethod
+	PASSED: testMethod
+	PASSED: testMethod
+	======================================
+	running data provider parallely
+	------------
+	public class p4 {
+	@Test(dataProvider = "dp")
+	public void test(String parameter) {
+		System.setProperty("webdriver.chrome.driver", "C:/Users/DELL/Desktop/resources-udemy/chromedriver.exe");
+		 WebDriver driver=new ChromeDriver();
+ 	driver.get("https://www.google.com/"); 
+ 	driver.findElement(By.xpath("//input[@class='gLFyf gsfi']")).sendKeys(parameter+Keys.ENTER);
+ 	driver.quit();
+	}
+	@DataProvider(parallel=true)
+	public Object[][] dp(){
+		return new Object[][] {{"retriver"},{"husky"},{"labrador"},{"german shephard"}};
+	}
+	}
+	============================================================================================================================
+	rerunning failed tests:
+	------------
+	public class RetryAnalyzer implements IRetryAnalyzer {
+	int counter=0;
+	int retryLimit = 4;
+
+	@Override
+	public boolean retry(ITestResult result) {
+		// TODO Auto-generated method stub
+		if(counter<retryLimit) {
+			counter++;
+			return true;
+		}
+		return false;
+	}
+
+	}
+	-------------
+	1st method of calling RetryAnalyzer:
+	public class p1 {
+	@Test(retryAnalyzer = com.test.rerunFailedTests.RetryAnalyzer.class)
+	public void Test1()
+	{
+		Assert.assertEquals(false, true);
+	}
+
+	@Test
+	public void Test2()
+	{
+		Assert.assertEquals(false, true);
+	}
+	}
+	------
+	===============================================
+    	Default test
+    	Tests run: 2, Failures: 2, Skips: 0, Retries: 4
+	===============================================
+
+
+	===============================================
+	Default suite
+	Total tests run: 6, Passes: 0, Failures: 2, Skips: 0, Retries: 4
+	===============================================
+	
+
+	
+
+
+
+
+
+	
+	
+
+	
+
+
+
+
+
+
+
+
